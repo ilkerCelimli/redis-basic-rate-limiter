@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -45,6 +46,7 @@ public class RedisBasicRateLimiterApplication {
 	}
 
 	@Scheduled(timeUnit = TimeUnit.SECONDS, fixedDelay = 15)
+	@Async
 	public void resetIpRateLimiter() {
 		Iterable<IpRateLimiter> ipRateLimiters = repository.findAll();
 		List<IpRateLimiter> list = new ArrayList<>();
