@@ -23,7 +23,6 @@ public class RateLimiterFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String ip = request.getRemoteAddr();
-
         Optional<IpRateLimiter> ipRateLimiter = ipRateLimiterRepository.findByIp(ip);
         if (ipRateLimiter.isEmpty()) {
             IpRateLimiter newIpRateLimiter = new IpRateLimiter(ip, 1, false, new Date(), new Date());
@@ -39,7 +38,9 @@ public class RateLimiterFilter extends OncePerRequestFilter {
             return;
         }
 
-        if(ipRateLimiterValue.getLastRequest().getTime() - new Date().getTime() < 1000){
+        if(new Date().getTime() - ipRateLimiterValue.getLastRequest().getTime() < 1000) {
+            ipRateLimiterValue.setBlocked(true);
+            this.ipRateLimiterRepository.save(ipRateLimiterValue);
             response.sendError(429, "Too Many Requests");
             return;
         }
