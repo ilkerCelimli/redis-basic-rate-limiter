@@ -6,3 +6,6 @@ spring:
     name: redis-rate-limiter
   cache:
     type: redis
+    redis:
+      time-to-live: 86400000
+
